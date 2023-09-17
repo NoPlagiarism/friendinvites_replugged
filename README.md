@@ -1,4 +1,4 @@
-# Friend Invites
+# (WIP) Friend Invites
 > Create friend invites easily in [Replugged](https://replugged.dev/)
 >
 > Port of [Vencord](https://vencord.dev) [plugin](https://github.com/Vendicated/Vencord/blob/main/src/plugins/friendInvites.ts) by [afn](https://github.com/xafn) and [Dziurwa](https://github.com/Dziurwa14)
