@@ -7,8 +7,8 @@ const FriendInvites = webpack.getByProps("createFriendInvite");
 
 export function start(): Promise<void> {
   inject.utils.registerSlashCommand({
-    name: "friend invite create",
-    description: "Generates a friend invite link.",
+    name: "friend-invite create",
+    description: "Generates a friend invite link",
     executor: async (interaction) => {
       try {
         if (!common.users.getCurrentUser().phone)
@@ -45,8 +45,8 @@ export function start(): Promise<void> {
   });
 
   inject.utils.registerSlashCommand({
-    name: "friend invite list",
-    description: "View a list of generated friend invites.",
+    name: "friend-invite list",
+    description: "View a list of generated friend invites",
     executor: async (interaction) => {
       try {
         const invites = await FriendInvites.getAllFriendInvites();
@@ -77,8 +77,8 @@ export function start(): Promise<void> {
   });
 
   inject.utils.registerSlashCommand({
-    name: "friend invite revoke",
-    description: "Revokes all generated friend invites.",
+    name: "friend-invite revoke",
+    description: "Revokes all generated friend invites",
     executor: async (interaction) => {
       try {
         await FriendInvites.revokeFriendInvites();
