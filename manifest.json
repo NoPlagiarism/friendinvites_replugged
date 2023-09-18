@@ -7,7 +7,7 @@
     "discordID": "358920224008830977",
     "github": "NoPlagiarism"
   },
-  "version": "0.5.0",
+  "version": "0.5.1",
   "updater": {
     "type": "github",
     "id": "NoPlagiarism/friendinvites_replugged"
