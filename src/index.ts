@@ -1,4 +1,5 @@
 import { Injector, Logger, webpack, common } from "replugged";
+import { ApplicationCommandOptionType } from "replugged/types";
 
 const inject = new Injector();
 const logger = Logger.plugin("xyz.noplagi.friendinvites");
@@ -9,21 +10,51 @@ export function start(): Promise<void> {
   inject.utils.registerSlashCommand({
     name: "friend-invite create",
     description: "Generates a friend invite link",
+    options: [
+      {
+        type: ApplicationCommandOptionType.Boolean,
+        name: "ephemeral",
+        description: "Is message shown only to you or not",
+        required: false,
+      },
+      {
+        type: ApplicationCommandOptionType.Number,
+        name: "uses",
+        description: "How many uses?",
+        required: false,
+        choices: [
+          { name: "1", displayName: "1", value: 1 },
+          { name: "5", displayName: "5", value: 5 },
+        ],
+      },
+    ],
     executor: async (interaction) => {
       try {
-        if (!common.users.getCurrentUser().phone)
+        const uses = interaction.getValue("uses", 5);
+        if (uses == 1 && !common.users.getCurrentUser().phone)
           return {
             send: false,
             result:
-              "You need to have a phone number connected to your account to create a friend invite!",
+              "You need to have a phone number connected to your account to create a friend invite with 1 use!",
           };
-        const invite = await FriendInvites.createFriendInvite({
-          contact_visibility: 1,
-          filtered_invite_suggestions_index: 1,
-          filter_visibilities: [],
+        let invite;
+        if (uses == 5) invite = await FriendInvites.createFriendInvite();
+        else {
+          const random = crypto.randomUUID();
+          const {body: { invite_suggestions }} = await common.api.post(
+            {url: "/friend-finder/find-friends",
+            body: {modified_contacts: {[random]: [1, "", ""]}, phone_contact_methods_count: 1}}
+          );
+          invite = await FriendInvites.createFriendInvite({
+            code: invite_suggestions[0][3],
+            recipient_phone_number_or_email: random,
+            contact_visibility: 1,
+            filter_visibilities: [],
+            filtered_invite_suggestions_index: 1
         });
+        }
         return {
-          send: false,
+          send: !interaction.getValue("ephemeral", true),
           result: `discord.gg/${invite.code} | Expires: <t:${
             new Date(invite.expires_at).getTime() / 1000
           }:R> | Max uses: \`${invite.max_uses}\``,
@@ -52,9 +83,9 @@ export function start(): Promise<void> {
         const invites = await FriendInvites.getAllFriendInvites();
         const friendInvitesList = invites.map(
           (invite) =>
-            `*discord.gg/${invite.code}* | Expires: <t:${new Date(
-              invite.expires_at,
-            ).getTime()}:R> | Times used: \`${invite.uses}/${invite.max_uses}\``,
+            `- *discord.gg/${invite.code}* | Expires: <t:${
+              new Date(invite.expires_at).getTime() / 1000
+            }:R> | Times used: \`${invite.uses}/${invite.max_uses}\``,
         );
         return {
           send: false,
