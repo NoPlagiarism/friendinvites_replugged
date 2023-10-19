@@ -7,10 +7,10 @@
     "discordID": "358920224008830977",
     "github": "NoPlagiarism"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "updater": {
-    "type": "github",
-    "id": "NoPlagiarism/friendinvites_replugged"
+    "type": "store",
+    "id": "xyz.noplagi.friendinvites"
   },
   "license": "MIT",
   "type": "replugged-plugin",

@@ -3,7 +3,7 @@
 >
 > Port of [Vencord](https://vencord.dev) [plugin](https://github.com/Vendicated/Vencord/blob/main/src/plugins/friendInvites/index.ts) by [afn](https://github.com/xafn) and [Dziurwa](https://github.com/Dziurwa14).
 
-[![Install in Replugged](https://img.shields.io/badge/-Install%20in%20Replugged-blue?style=for-the-badge&logo=none)](https://replugged.dev/install?identifier=NoPlagiarism/friendinvites_replugged&source=github)
+[![Install in Replugged](https://img.shields.io/badge/-Install%20in%20Replugged-blue?style=for-the-badge&logo=none)](https://replugged.dev/install?identifier=xyz.noplagi.friendinvites)
 
 ## Commands
 - `/friend-invite create`
