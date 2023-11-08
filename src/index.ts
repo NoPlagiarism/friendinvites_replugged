@@ -1,12 +1,17 @@
 import { Injector, Logger, webpack, common } from "replugged";
 import { ApplicationCommandOptionType } from "replugged/types";
+import { FriendInvite, FriendInviteActions } from "./types";
 
 const inject = new Injector();
 const logger = Logger.plugin("xyz.noplagi.friendinvites");
 
-const FriendInvites = webpack.getByProps("createFriendInvite");
+const FriendInvites = webpack.getByProps<FriendInviteActions>("createFriendInvite");
 
-export function start(): Promise<void> {
+export async function start(): Promise<void> {
+  if (!FriendInvites) {
+    logger.error("Failed to find required webpack module");
+    return;
+  }
   inject.utils.registerSlashCommand({
     name: "friend-invite create",
     description: "Generates a friend invite link",
@@ -37,11 +42,11 @@ export function start(): Promise<void> {
             result:
               "You need to have a phone number connected to your account to create a friend invite with 1 use!",
           };
-        let invite;
+        let invite: FriendInvite;
         if (uses == 5) invite = await FriendInvites.createFriendInvite();
         else {
           const random = crypto.randomUUID();
-          const {body: { invite_suggestions }} = await common.api.post(
+          const {body: { invite_suggestions }} = await common.api.post<any>(
             {url: "/friend-finder/find-friends",
             body: {modified_contacts: {[random]: [1, "", ""]}, phone_contact_methods_count: 1}}
           );
