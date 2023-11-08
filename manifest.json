@@ -15,5 +15,6 @@
   "license": "MIT",
   "type": "replugged-plugin",
   "renderer": "./src/index.ts",
-  "source": "https://github.com/NoPlagiarism/friendinvites_replugged"
+  "source": "https://github.com/NoPlagiarism/friendinvites_replugged",
+  "image": "https://i.imgur.com/S9WkWFv.png"
 }
