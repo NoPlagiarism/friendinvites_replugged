@@ -14,8 +14,7 @@ export interface FriendInvite {
 }
 
 export interface FriendInviteActions {
-  createFriendInvite: (...args: any[]) => FriendInvite;
-  getAllFriendInvites:  () => Array<FriendInvite>;
-  revokeFriendInvite: DefaultTypes.AnyFunction;
+  createFriendInvite: (...args: any[]) => Promise<FriendInvite>;
+  getAllFriendInvites:  () => Promise<FriendInvite[]>;
   revokeFriendInvites: DefaultTypes.AnyFunction;
 }

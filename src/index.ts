@@ -46,6 +46,8 @@ export async function start(): Promise<void> {
         if (uses == 5) invite = await FriendInvites.createFriendInvite();
         else {
           const random = crypto.randomUUID();
+          // Yeah, no more ideas, I can't do TypeScript magic here.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const {body: { invite_suggestions }} = await common.api.post<any>(
             {url: "/friend-finder/find-friends",
             body: {modified_contacts: {[random]: [1, "", ""]}, phone_contact_methods_count: 1}}
