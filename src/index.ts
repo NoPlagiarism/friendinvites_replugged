@@ -97,7 +97,7 @@ export function start(): void {
   inject.utils.registerSlashCommand({
     name: "friend-invite list",
     description: "View a list of generated friend invites",
-    executor: async (interaction) => {
+    executor: async (_) => {
       try {
         const invites = await FriendInvites.getAllFriendInvites();
         return {
@@ -123,7 +123,7 @@ export function start(): void {
   inject.utils.registerSlashCommand({
     name: "friend-invite revoke",
     description: "Revokes all generated friend invites",
-    executor: async (interaction) => {
+    executor: async (_) => {
       try {
         await FriendInvites.revokeFriendInvites();
         return {
