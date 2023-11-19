@@ -1,6 +1,7 @@
-import { Injector, Logger, webpack, common } from "replugged";
-import { ApplicationCommandOptionType } from "replugged/types";
-import { FriendInvite, FriendInviteActions } from "./types";
+import { Injector, Logger, common, webpack } from "replugged";
+import { ApplicationCommandOptionType, FriendInvite, FriendInviteActions } from "./types";
+import * as modes from './modes'
+import { cfg } from "./settings";
 
 const inject = new Injector();
 const logger = Logger.plugin("xyz.noplagi.friendinvites");
@@ -42,6 +43,11 @@ export async function start(): Promise<void> {
             result:
               "You need to have a phone number connected to your account to create a friend invite with 1 use!",
           };
+        const isSend = !interaction.getValue("ephemeral", true);
+        let mode: modes.MessageMethod;
+        if (isSend && cfg.get("alwaysSendSimple", true)) mode = modes.SimpleMessage;
+        else mode = modes.getModeByID(cfg.get("mode"), modes.SimpleMessage)!;
+        if (!mode.canSend && isSend) mode = modes.SimpleMessage;
         let invite: FriendInvite;
         if (uses == 5) invite = await FriendInvites.createFriendInvite();
         else {
@@ -61,10 +67,8 @@ export async function start(): Promise<void> {
         });
         }
         return {
-          send: !interaction.getValue("ephemeral", true),
-          result: `discord.gg/${invite.code} | Expires: <t:${
-            new Date(invite.expires_at).getTime() / 1000
-          }:R> | Max uses: \`${invite.max_uses}\``,
+          send: isSend,
+          ...mode.createdFriendInvite(invite),
         };
       } catch (err) {
         logger.error(err as string);
@@ -88,15 +92,9 @@ export async function start(): Promise<void> {
     executor: async (interaction) => {
       try {
         const invites = await FriendInvites.getAllFriendInvites();
-        const friendInvitesList = invites.map(
-          (invite) =>
-            `- *discord.gg/${invite.code}* | Expires: <t:${
-              new Date(invite.expires_at).getTime() / 1000
-            }:R> | Times used: \`${invite.uses}/${invite.max_uses}\``,
-        );
         return {
           send: false,
-          result: friendInvitesList.join("\n") || "You have no active friend invites :(",
+          ...modes.getModeByID(cfg.get("mode"), modes.SimpleMessage)!.listFriendInvites(invites)
         };
       } catch (err) {
         logger.error(err as string);
@@ -122,7 +120,7 @@ export async function start(): Promise<void> {
         await FriendInvites.revokeFriendInvites();
         return {
           send: false,
-          result: "Friend invites have been revoked.",
+          ...modes.getModeByID(cfg.get("mode"), modes.SimpleMessage)!.revokedFriendInvites(),
         };
       } catch (err) {
         logger.error(err as string);
@@ -144,3 +142,5 @@ export async function start(): Promise<void> {
 export function stop(): void {
   inject.uninjectAll();
 }
+
+export {SettingsWindow as Settings} from './settings'

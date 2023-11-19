@@ -18,3 +18,6 @@ export interface FriendInviteActions {
   getAllFriendInvites:  () => Promise<FriendInvite[]>;
   revokeFriendInvites: DefaultTypes.AnyFunction;
 }
+
+export { types as DefaultTypes } from 'replugged'
+export const {ApplicationCommandOptionType} = DefaultTypes;
