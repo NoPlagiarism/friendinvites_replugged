@@ -1,6 +1,6 @@
 import { Injector, Logger, common, webpack } from "replugged";
 import { ApplicationCommandOptionType, FriendInvite, FriendInviteActions } from "./types";
-import * as modes from './modes'
+import * as modes from "./modes";
 import { cfg } from "./settings";
 
 const inject = new Injector();
@@ -8,10 +8,10 @@ const logger = Logger.plugin("xyz.noplagi.friendinvites");
 
 const FriendInvites = webpack.getByProps<FriendInviteActions>("createFriendInvite");
 
-export async function start(): Promise<void> {
+export function start(): void {
   if (!FriendInvites) {
     logger.error("Failed to find required webpack module");
-    return;
+    throw Error("Failed to find required webpack module");
   }
   inject.utils.registerSlashCommand({
     name: "friend-invite create",
@@ -52,19 +52,27 @@ export async function start(): Promise<void> {
         if (uses == 5) invite = await FriendInvites.createFriendInvite();
         else {
           const random = crypto.randomUUID();
-          // Yeah, no more ideas, I can't do TypeScript magic here.
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const {body: { invite_suggestions }} = await common.api.post<any>(
-            {url: "/friend-finder/find-friends",
-            body: {modified_contacts: {[random]: [1, "", ""]}, phone_contact_methods_count: 1}}
-          );
+          const {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            body: { invite_suggestions },
+            // Yeah, no more ideas, I can't do TypeScript magic here.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } = await common.api.post<any>({
+            url: "/friend-finder/find-friends",
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            body: { modified_contacts: { [random]: [1, "", ""] }, phone_contact_methods_count: 1 },
+          });
           invite = await FriendInvites.createFriendInvite({
             code: invite_suggestions[0][3],
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             recipient_phone_number_or_email: random,
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             contact_visibility: 1,
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             filter_visibilities: [],
-            filtered_invite_suggestions_index: 1
-        });
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            filtered_invite_suggestions_index: 1,
+          });
         }
         return {
           send: isSend,
@@ -94,7 +102,7 @@ export async function start(): Promise<void> {
         const invites = await FriendInvites.getAllFriendInvites();
         return {
           send: false,
-          ...modes.getModeByID(cfg.get("mode"), modes.SimpleMessage)!.listFriendInvites(invites)
+          ...modes.getModeByID(cfg.get("mode"), modes.SimpleMessage)!.listFriendInvites(invites),
         };
       } catch (err) {
         logger.error(err as string);
@@ -143,4 +151,4 @@ export function stop(): void {
   inject.uninjectAll();
 }
 
-export {SettingsWindow as Settings} from './settings'
+export { SettingsWindow as Settings } from "./settings";

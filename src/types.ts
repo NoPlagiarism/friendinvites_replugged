@@ -1,5 +1,6 @@
-import { types as DefaultTypes } from 'replugged'
-import { UserJSON } from 'discord-types/general';
+/* eslint-disable @typescript-eslint/naming-convention */
+import { types as DefaultTypes } from "replugged";
+import { UserJSON } from "discord-types/general";
 
 export interface FriendInvite {
   channel_id: null;
@@ -14,10 +15,12 @@ export interface FriendInvite {
 }
 
 export interface FriendInviteActions {
+  // Not fully known arguments
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createFriendInvite: (...args: any[]) => Promise<FriendInvite>;
-  getAllFriendInvites:  () => Promise<FriendInvite[]>;
+  getAllFriendInvites: () => Promise<FriendInvite[]>;
   revokeFriendInvites: DefaultTypes.AnyFunction;
 }
 
-export { types as DefaultTypes } from 'replugged'
-export const {ApplicationCommandOptionType} = DefaultTypes;
+export { types as DefaultTypes } from "replugged";
+export const { ApplicationCommandOptionType } = DefaultTypes;

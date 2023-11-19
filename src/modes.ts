@@ -10,7 +10,7 @@ export interface MessageMethod {
 
 export const SimpleMessage: MessageMethod = {
   canSend: true,
-  stringId: 'simple',
+  stringId: "simple",
   createdFriendInvite(invite) {
     return {
       result: `discord.gg/${invite.code} | Expires: <t:${
@@ -34,11 +34,11 @@ export const SimpleMessage: MessageMethod = {
       result: "Friend invites have been revoked.",
     };
   },
-}
+};
 
 export const EscapedMessage: MessageMethod = {
   canSend: true,
-  stringId: 'escaped',
+  stringId: "escaped",
   createdFriendInvite(invite) {
     return {
       result: `\`discord.gg/${invite.code}\` | Expires: <t:${
@@ -62,13 +62,16 @@ export const EscapedMessage: MessageMethod = {
       result: "Friend invites have been revoked.",
     };
   },
-}
+};
 
-export let modes = [SimpleMessage, EscapedMessage]
+export let modes = [SimpleMessage, EscapedMessage];
 
-export function getModeByID(modeID: string, fallback?: MessageMethod): MessageMethod | null | undefined {
+export function getModeByID(
+  modeID: string,
+  fallback?: MessageMethod,
+): MessageMethod | null | undefined {
   for (let mode of modes) {
-    if (mode.stringId == modeID) return mode
+    if (mode.stringId == modeID) return mode;
   }
-  if (fallback) return fallback
+  if (fallback) return fallback;
 }
