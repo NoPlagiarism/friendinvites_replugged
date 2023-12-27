@@ -60,26 +60,31 @@ export function start(): void {
           // Yeah, no more ideas, I can't do TypeScript magic here.
           try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const response: HTTPResponse<Record<string, any>> = await common.api.post<any>({
-            url: "/friend-finder/find-friends",
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            body: { modified_contacts: { [random]: [1, "", ""] }, phone_contact_methods_count: 1 },
-          });
-          const {
-            body: { invite_suggestions },
-          } = response;
-          invite = await FriendInvites.createFriendInvite({
-            code: invite_suggestions[0][3],
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            recipient_phone_number_or_email: random,
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            contact_visibility: 1,
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            filter_visibilities: [],
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            filtered_invite_suggestions_index: 1,
-          });} catch (_) {
-
+            const response: HTTPResponse<Record<string, any>> = await common.api.post<any>({
+              url: "/friend-finder/find-friends",
+              body: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                modified_contacts: { [random]: [1, "", ""] },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                phone_contact_methods_count: 1,
+              },
+            });
+            const {
+              // eslint-disable-next-line @typescript-eslint/naming-convention
+              body: { invite_suggestions },
+            } = response;
+            invite = await FriendInvites.createFriendInvite({
+              code: invite_suggestions[0][3],
+              // eslint-disable-next-line @typescript-eslint/naming-convention
+              recipient_phone_number_or_email: random,
+              // eslint-disable-next-line @typescript-eslint/naming-convention
+              contact_visibility: 1,
+              // eslint-disable-next-line @typescript-eslint/naming-convention
+              filter_visibilities: [],
+              // eslint-disable-next-line @typescript-eslint/naming-convention
+              filtered_invite_suggestions_index: 1,
+            });
+          } catch (_) {
             logger.error(`Got error while friend-finder/find-friends`);
             return { send: false, result: "Got some error. Try again later or choose 5 uses" };
           }
