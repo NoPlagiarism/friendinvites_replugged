@@ -20,6 +20,7 @@
 ## Implementations in other clients
 - [Vencord](https://vencord.dev/plugins/FriendInvites)
 - [Vendetta](https://discord.com/channels/1015931589865246730/1093941056078364763/1093941056078364763)
+- [Enmity](https://discord.com/channels/950850315601711176/961782195767365732/1036067393425903688)
 
 
 > Big thanks to [Replugged Team](https://github.com/replugged-org) for [Replugged](https://github.com/replugged-org/replugged) and [thewilloftheshadow](https://github.com/thewilloftheshadow) for [code example](https://github.com/thewilloftheshadow/replugged-tags)
