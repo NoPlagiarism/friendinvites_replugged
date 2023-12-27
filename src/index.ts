@@ -1,5 +1,10 @@
 import { Injector, Logger, common, webpack } from "replugged";
-import { ApplicationCommandOptionType, FriendInvite, FriendInviteActions } from "./types";
+import {
+  ApplicationCommandOptionType,
+  FriendInvite,
+  FriendInviteActions,
+  HTTPResponse,
+} from "./types";
 import * as modes from "./modes";
 import { cfg } from "./settings";
 
@@ -52,16 +57,17 @@ export function start(): void {
         if (uses == 5) invite = await FriendInvites.createFriendInvite();
         else {
           const random = crypto.randomUUID();
-          const {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            body: { invite_suggestions },
-            // Yeah, no more ideas, I can't do TypeScript magic here.
+          // Yeah, no more ideas, I can't do TypeScript magic here.
+          try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          } = await common.api.post<any>({
+          const response: HTTPResponse<Record<string, any>> = await common.api.post<any>({
             url: "/friend-finder/find-friends",
             // eslint-disable-next-line @typescript-eslint/naming-convention
             body: { modified_contacts: { [random]: [1, "", ""] }, phone_contact_methods_count: 1 },
           });
+          const {
+            body: { invite_suggestions },
+          } = response;
           invite = await FriendInvites.createFriendInvite({
             code: invite_suggestions[0][3],
             // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -72,7 +78,11 @@ export function start(): void {
             filter_visibilities: [],
             // eslint-disable-next-line @typescript-eslint/naming-convention
             filtered_invite_suggestions_index: 1,
-          });
+          });} catch (_) {
+
+            logger.error(`Got error while friend-finder/find-friends`);
+            return { send: false, result: "Got some error. Try again later or choose 5 uses" };
+          }
         }
         return {
           send: isSend,

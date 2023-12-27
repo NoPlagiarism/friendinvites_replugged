@@ -14,6 +14,14 @@ export interface FriendInvite {
   uses: number;
 }
 
+export interface HTTPResponse<T = Record<string, unknown>> {
+  body: T;
+  headers: Record<string, string>;
+  ok: boolean;
+  status: number;
+  text: string;
+}
+
 export interface FriendInviteActions {
   // Not fully known arguments
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
