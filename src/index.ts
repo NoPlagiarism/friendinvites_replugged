@@ -11,13 +11,12 @@ import { cfg } from "./settings";
 const inject = new Injector();
 const logger = Logger.plugin("xyz.noplagi.friendinvites");
 
-const FriendInvites = webpack.getByProps<FriendInviteActions>("createFriendInvite");
-
-export function start(): void {
-  if (!FriendInvites) {
+export async function start(): Promise<void> {
+  const FriendInvites = await webpack.waitForProps<FriendInviteActions>("createFriendInvite");
+  /*if (!FriendInvites) {
     logger.error("Failed to find required webpack module");
     throw Error("Failed to find required webpack module");
-  }
+  }*/
   inject.utils.registerSlashCommand({
     name: "friend-invite create",
     description: "Generates a friend invite link",
