@@ -1,9 +1,8 @@
-import { Injector, Logger, common, webpack } from "replugged";
+import { Injector, Logger, webpack } from "replugged";
 import {
   ApplicationCommandOptionType,
   FriendInvite,
   FriendInviteActions,
-  HTTPResponse,
 } from "./types";
 import * as modes from "./modes";
 import { cfg } from "./settings";
