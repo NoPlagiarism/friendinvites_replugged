@@ -27,63 +27,16 @@ export async function start(): Promise<void> {
         description: "Is message shown only to you or not",
         required: false,
       },
-      {
-        type: ApplicationCommandOptionType.Number,
-        name: "uses",
-        description: "How many uses?",
-        required: false,
-        choices: [
-          { name: "1", displayName: "1", value: 1 },
-          { name: "5", displayName: "5", value: 5 },
-        ],
-      },
     ],
     executor: async (interaction) => {
       try {
-        const uses = interaction.getValue("uses", 5);
-        if (uses == 1 && !common.users.getCurrentUser().phone)
-          return {
-            send: false,
-            result:
-              "You need to have a phone number connected to your account to create a friend invite with 1 use!",
-          };
         const isSend = !interaction.getValue("ephemeral", true);
         let mode: modes.MessageMethod;
         if (isSend && cfg.get("alwaysSendSimple", true)) mode = modes.SimpleMessage;
         else mode = modes.getModeByID(cfg.get("mode"), modes.SimpleMessage)!;
         if (!mode.canSend && isSend) mode = modes.SimpleMessage;
         let invite: FriendInvite;
-        if (uses == 5) invite = await FriendInvites.createFriendInvite();
-        else {
-          const random = crypto.randomUUID();
-          // Yeah, no more ideas, I can't do TypeScript magic here.
-          try {
-            // Disabling naming-convention in this block with direct api request
-            /* eslint-disable @typescript-eslint/naming-convention */
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const response: HTTPResponse<Record<string, any>> = await common.api.post<any>({
-              url: "/friend-finder/find-friends",
-              body: {
-                modified_contacts: { [random]: [1, "", ""] },
-                phone_contact_methods_count: 1,
-              },
-            });
-            const {
-              body: { invite_suggestions },
-            } = response;
-            invite = await FriendInvites.createFriendInvite({
-              code: invite_suggestions[0][3],
-              recipient_phone_number_or_email: random,
-              contact_visibility: 1,
-              filter_visibilities: [],
-              filtered_invite_suggestions_index: 1,
-            });
-            /* eslint-enable @typescript-eslint/naming-convention */
-          } catch (_) {
-            logger.error(`Got error while friend-finder/find-friends`);
-            return { send: false, result: "Got some error. Try again later or choose 5 uses" };
-          }
-        }
+        invite = await FriendInvites.createFriendInvite();
         return {
           send: isSend,
           ...mode.createdFriendInvite(invite),
